@@ -12,7 +12,8 @@ use MottoIdea::DB::Handler::Idea;
 use constant {
     DEFAULT_LIMIT        => 30,
     DEFAULT_OFFSET       => 0,
-    DEFAULT_TIME_TO_FIND => 60 * 60 * 24, # 1譌･蜑阪∪縺ｧ
+    DEFAULT_ORDER        => 'DESC',
+    DEFAULT_TIME_TO_FIND => 60 * 60 * 24,
 };
 
 __PACKAGE__->mk_accessors(qw/master slave/);
@@ -73,7 +74,7 @@ sub find {
         to     => { regex => qr/^\d+$/, default => $self->time_to_mysqldatetime(time) },
         offset => { regex => qr/^\d+$/, default => DEFAULT_OFFSET() },
         limit  => { regex => qr/^\d+$/, default => DEFAULT_LIMIT() },
-        sort   => { regex => qr/^(DESC|ASC)$/, default => 'DESC' },
+        order  => { regex => qr/^(DESC|ASC)$/, default => DEFAULT_ORDER() },
         find_type => { regex => qr/^(updated_at|inserted_at)$/, default => 'inserted_at' },
     });
 
@@ -82,7 +83,7 @@ sub find {
             SELECT * FROM %s WHERE %s BETWEEN :from AND :to ORDER BY %s %s LIMIT %s OFFSET %s
         },
         $params,
-        [ $self->table, map { $params->{$_} } qw/find_type find_type sort limit offset/]
+        [ $self->table, map { $params->{$_} } qw/find_type find_type order limit offset/]
     )->all;
     return unless $row;
     return [ map {$_->get_columns} @$row ];

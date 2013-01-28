@@ -22,10 +22,10 @@ my $obj = new_ok $class;
 sub create_dummy_data {
     my $id = int rand 1000000;
     return {
-        idea_id          => $id,
-        remarkable_point => int rand 32,
-        current_rank     => int rand 30,
-        last_rank        => int rand 30,
+        idea_id        => $id,
+        tendency       => int rand 32,
+        current_rank   => int rand 30,
+        last_rank      => int rand 30,
     };
 }
 
@@ -56,14 +56,14 @@ subtest q/crud/ => sub {
         my $update_time = $now+600;
         Test::MockTime::set_fixed_time($update_time);
         my $expected = {%$dummy_data1};
-        $expected->{remarkable_point} = 3;
-        $expected->{last_rank}        = $expected->{current_rank};
-        $expected->{current_rank}     = 1;
-        $expected->{inserted_at}      = $obj->time_to_mysqldatetime($now);
-        $expected->{updated_at}       = $obj->time_to_mysqldatetime($update_time);
+        $expected->{tendency}     = 3;
+        $expected->{last_rank}    = $expected->{current_rank};
+        $expected->{current_rank} = 1;
+        $expected->{inserted_at}  = $obj->time_to_mysqldatetime($now);
+        $expected->{updated_at}   = $obj->time_to_mysqldatetime($update_time);
         ok $obj->update_by_id(
             idea_id => $expected->{idea_id},
-            remarkable_point => $expected->{remarkable_point},
+            tendency => $expected->{tendency},
             current_rank => $expected->{current_rank},
             last_rank => $expected->{last_rank},
         );

@@ -26,6 +26,7 @@ sub create_dummy_data {
         title          => "dummyタイトル:$id",
         status_id      => int rand 4,
         category_id    => int rand 100,
+        count          => int rand 10000,
         positive_point => int rand 10000,
         negative_point => int rand 10000,
     };
@@ -54,31 +55,20 @@ subtest q/crud/ => sub {
         cmp_deeply $expected, $row;
     };
 
+
     subtest q/update/ => sub {
         my $update_time = $now+600;
         Test::MockTime::set_fixed_time($update_time);
         my $expected = {%$dummy_data1};
+        $expected->{title} = 'ほげええ';
         $expected->{status_id} = 3;
+        $expected->{count} = 10;
         $expected->{inserted_at} = $obj->time_to_mysqldatetime($now);
         $expected->{updated_at} = $obj->time_to_mysqldatetime($update_time);
-        ok $obj->update_statsu_by_id(
-            idea_id   => $expected->{idea_id},
-            status_id => 3,
+        ok $obj->update_by_id(
+            map { $_ => $expected->{$_} } qw/idea_id title status_id category_id count positive_point negative_point/
         );
         my $row = $obj->select_by_id(idea_id=>$expected->{idea_id});
-        cmp_deeply $expected, $row;
-
-        $update_time = $now+900;
-        Test::MockTime::set_fixed_time($update_time);
-        $expected->{positive_point} = 20;
-        $expected->{negative_point} = 10;
-        $expected->{updated_at} = $obj->time_to_mysqldatetime($update_time);
-        ok $obj->update_point_by_id(
-            idea_id => $expected->{idea_id},
-            negative_point => 10,
-            positive_point => 20,
-        );
-        $row = $obj->select_by_id(idea_id=>$expected->{idea_id});
         cmp_deeply $expected, $row;
     };
 

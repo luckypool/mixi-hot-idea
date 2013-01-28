@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.010;
 
-use List::MoreUtils qw/all/;
+use List::MoreUtils qw/all firstidx/;
 
 use WWW::Mechanize;
 use WWW::Mechanize::DecodedContent;
@@ -99,13 +99,15 @@ my $html;
     local $/ = undef; # <FILE>を配列じゃなくて一括で受け取る
     $html = <IN>;
 }
+close IN;
+
 my $q = Web::Query->new_from_html($html);
 
 
 $q = $q->find('.entryList01');
 my $idea_list_query = $q->last()->find('li');
 
-my $list = $idea_list_query->map(sub {
+my $current_data_list = $idea_list_query->map(sub {
     my ($i, $elem) = @_;
     return +{
         rank        => $i+1,
@@ -122,21 +124,27 @@ my $main_model   = MottoIdea::Model::Idea::Main->new;
 my $rank_model   = MottoIdea::Model::Idea::Rank->new;
 my $status_model = MottoIdea::Model::Idea::Status->new;
 
-for(@$list){
-    my $rank = $_->{rank};
-    delete $_->{rank};
-    my $exists = $main_model->select_by_id(idea_id=>$_->{idea_id});
-    my $main_params = $_;
+my $found_data_list = $main_model->find();
+my $found_data_href = {
+    map { $_->{idea_id} => $_ } @$found_data_list
+};
+
+for my $current_data (@$current_data_list){
+    my $current_rank = $current_data->{rank};
+    delete $current_data->{current_rank};
+
+    my $exists = defined $found_data_href->{$current_data->{idea_id}};
+    my $main_params = $current_data;
     my $rank_params = {
-        idea_id => $_->{idea_id},
+        idea_id => $current_data->{idea_id},
         remarkable_point => 1,
-        current_rank => $rank,
+        current_rank => $current_rank,
         last_rank => 0,
     };
     my $status_params = {
-        idea_id => $_->{idea_id},
+        idea_id => $current_data->{idea_id},
         has_response => 0,
-        current_status => $_->{status_id},
+        current_status => $current_data->{status_id},
         last_status    => 0,
     };
     unless($exists){
@@ -144,17 +152,24 @@ for(@$list){
         $rank_model->insert($rank_params);
         $status_model->insert($status_params);
     }
-    my $is_same = all { $exists->{$_} eq $main_params->{$_} } qw/positive_point negative_point status_id/;
-    unless($is_same){
+
+    my $last_rank = map { ++$_ } firstidx { $_->{idea_id} eq $current_data->{idea_id} } @$found_data_list;
+
+    unless($last_rank eq $current_rank){
         $main_model->update_by_id($main_params);
 
-        $rank_params->{last_rank} = $rank_params->{current_rank};
-        $rank_params->{current_rank} = $rank;
-        $rank_params->{remarkable_point} = 0 if $rank_params->{current_rank} eq 0;
+        $rank_params->{current_rank} = $current_rank;
+        $rank_params->{last_rank}    = $last_rank;
+        # $rank_params->{remarkable_point} = 0 if $rank_params->{current_rank} eq 0;
 
-        $rank_model->update_by_id($rank_params);
+        # $rank_model->update_by_id($rank_params);
 
-        $status_model->update_by_id($status_params);
-    }
+        # $status_model->update_by_id($status_params);
+}
+
+# --
+sub calc_remarkable_point {
+    my ($current_rank, $last_rank) = @_;
+    my $diff = defined $last_rank ? $last_rank : 30;
 }
 

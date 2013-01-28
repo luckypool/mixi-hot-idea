@@ -6,7 +6,7 @@ use utf8;
 use parent qw/MottoIdea::Model::Idea::Base/;
 
 use constant {
-    TABLE_MAIN => 'idea_main',
+    TABLE_MAIN => 'main_info',
 };
 
 sub table {
@@ -20,6 +20,7 @@ sub validate_basic_params {
         title          => { type  => Params::Validate::SCALAR },
         status_id      => { regex => qr/^\d+$/ },
         category_id    => { regex => qr/^\d+$/ },
+        count          => { regex => qr/^\d+$/, default => 0 },
         positive_point => { regex => qr/^\d+$/ },
         negative_point => { regex => qr/^\d+$/ },
     });
@@ -29,7 +30,7 @@ sub get_update_params {
     my $self = shift;
     my ($params) = @_;
     return {
-        map { $_ => $params->{$_} } qw/title status_id category_id positive_point negative_point/
+        map { $_ => $params->{$_} } qw/title status_id category_id count positive_point negative_point/
     };
 }
 
@@ -42,35 +43,6 @@ sub bulk_insert {
         +{ $self->validate_basic_params($_) }
     } @{$param->{data}};
     return $self->master->bulk_insert($self->table, \@insert_param_list);
-}
-
-sub update_point_by_id {
-    my $self = shift;
-    my $params = Params::Validate::validate(@_, {
-        idea_id   => { regex => qr/^\d+$/ },
-        positive_point => { regex => qr/^\d+$/ },
-        negative_point => { regex => qr/^\d+$/ },
-    });
-    return $self->master->update(
-        $self->table, {
-            positive_point => $params->{positive_point},
-            negative_point => $params->{negative_point},
-        },
-        { idea_id   => $params->{idea_id} },
-    );
-}
-
-sub update_statsu_by_id {
-    my $self = shift;
-    my $params = Params::Validate::validate(@_, {
-        idea_id   => { regex => qr/^\d+$/ },
-        status_id => { regex => qr/^\d+$/ },
-    });
-    return $self->master->update(
-        $self->table,
-        { status_id => $params->{status_id} },
-        { idea_id   => $params->{idea_id} },
-    );
 }
 
 1;

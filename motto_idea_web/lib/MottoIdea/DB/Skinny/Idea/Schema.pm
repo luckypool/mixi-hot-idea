@@ -34,23 +34,16 @@ install_inflate_rule '^.+_at$' => callback {
 };
 
 install_utf8_columns qw/title/;
-install_table idea_main => schema {
+install_table main_info => schema {
     pk 'idea_id';
-    columns qw/idea_id title status_id category_id positive_point negative_point updated_at inserted_at/;
+    columns qw/idea_id title status_id category_id count positive_point negative_point updated_at inserted_at/;
     trigger pre_insert => \&pre_insert_hook;
     trigger pre_update => \&pre_update_hook;
 };
 
-install_table rank => schema {
+install_table ranking_info => schema {
     pk 'idea_id';
-    columns qw/idea_id remarkable_point current_rank last_rank inserted_at updated_at/;
-    trigger pre_insert => \&pre_insert_hook;
-    trigger pre_update => \&pre_update_hook;
-};
-
-install_table status => schema {
-    pk 'idea_id';
-    columns qw/idea_id has_response current_status last_status inserted_at updated_at/;
+    columns qw/idea_id tendency current_rank last_rank inserted_at updated_at/;
     trigger pre_insert => \&pre_insert_hook;
     trigger pre_update => \&pre_update_hook;
 };
