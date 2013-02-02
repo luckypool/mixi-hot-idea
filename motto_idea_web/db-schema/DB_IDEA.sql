@@ -10,7 +10,6 @@ CREATE TABLE main_info (
     category_id TINYINT unsigned NOT NULL,
     positive_point INT unsigned NOT NULL,
     negative_point INT unsigned NOT NULL,
-    count INT unsigned NOT NULL DEFAULT 0,
     inserted_at DATETIME NOT NULL DEFAULT 0,
     updated_at DATETIME NOT NULL DEFAULT 0,
     PRIMARY KEY (idea_id),

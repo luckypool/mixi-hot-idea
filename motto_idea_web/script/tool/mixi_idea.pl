@@ -4,7 +4,8 @@ use strict;
 use warnings;
 use 5.010;
 
-use List::MoreUtils qw/all firstidx/;
+use List::MoreUtils qw/all apply indexes/;
+use Date::Calc qw/Date_to_Time Today_and_Now Mktime/;
 
 use WWW::Mechanize;
 use WWW::Mechanize::DecodedContent;
@@ -12,7 +13,6 @@ use Web::Query;
 
 use MottoIdea::Model::Idea::Main;
 use MottoIdea::Model::Idea::Rank;
-use MottoIdea::Model::Idea::Status;
 
 #DEBUG
 use Data::Dumper;
@@ -79,9 +79,7 @@ sub get_id {
 }
 
 # my $conf = do q(./config.pl) or die;
-#
 # my $search_idea_url = q{http://mixi.jp/search_idea.pl?category_id=0&status_id=99&keyword=&order=2&ignore_mikan};
-#
 # my $mech = WWW::Mechanize->new;
 # $mech->get('http://mixi.jp/');
 # $mech->submit_form(
@@ -100,7 +98,6 @@ my $html;
     $html = <IN>;
 }
 close IN;
-
 my $q = Web::Query->new_from_html($html);
 
 
@@ -122,7 +119,6 @@ my $current_data_list = $idea_list_query->map(sub {
 
 my $main_model   = MottoIdea::Model::Idea::Main->new;
 my $rank_model   = MottoIdea::Model::Idea::Rank->new;
-my $status_model = MottoIdea::Model::Idea::Status->new;
 
 my $found_data_list = $main_model->find();
 my $found_data_href = {
@@ -131,45 +127,55 @@ my $found_data_href = {
 
 for my $current_data (@$current_data_list){
     my $current_rank = $current_data->{rank};
-    delete $current_data->{current_rank};
+    delete $current_data->{rank};
 
-    my $exists = defined $found_data_href->{$current_data->{idea_id}};
-    my $main_params = $current_data;
+    my $main_params = {
+        %$current_data,
+    };
     my $rank_params = {
-        idea_id => $current_data->{idea_id},
-        remarkable_point => 1,
+        idea_id      => $current_data->{idea_id},
+        tendency     => int 1 * 60 * 60 * 24 / 600,
         current_rank => $current_rank,
-        last_rank => 0,
+        last_rank    => 0,
     };
-    my $status_params = {
-        idea_id => $current_data->{idea_id},
-        has_response => 0,
-        current_status => $current_data->{status_id},
-        last_status    => 0,
-    };
-    unless($exists){
-        $main_model->insert($main_params);
-        $rank_model->insert($rank_params);
-        $status_model->insert($status_params);
+
+    my $found_data = $found_data_href->{$current_data->{idea_id}};
+    if(not defined $found_data){
+        $main_model->replace($main_params);
+        $rank_model->replace($rank_params);
+        next;
     }
 
-    my $last_rank = map { ++$_ } firstidx { $_->{idea_id} eq $current_data->{idea_id} } @$found_data_list;
+    my $is_not_changed = all { $found_data->{$_} eq $current_data->{$_} } qw/positive_point negative_point/;
+    my $plus_count = $is_not_changed ? 0 : calc_count($found_data, $current_data);
+    my $diff_sec = calc_diff_sec(map { $found_data->{$_} } qw/updated_at inserted_at/);
 
-    unless($last_rank eq $current_rank){
-        $main_model->update_by_id($main_params);
-
-        $rank_params->{current_rank} = $current_rank;
-        $rank_params->{last_rank}    = $last_rank;
-        # $rank_params->{remarkable_point} = 0 if $rank_params->{current_rank} eq 0;
-
-        # $rank_model->update_by_id($rank_params);
-
-        # $status_model->update_by_id($status_params);
+    $rank_params->{tendency}  = int $plus_count * 60 * 60 * 24 / $diff_sec;
+    $rank_params->{last_rank} = $rank_model->select_current_rank_by_id(idea_id=>$current_data->{idea_id});
+    $rank_params->{current_rank} = $current_rank;
+    $rank_model->update($rank_params);
+    $main_model->update($main_params);
 }
 
-# --
-sub calc_remarkable_point {
-    my ($current_rank, $last_rank) = @_;
-    my $diff = defined $last_rank ? $last_rank : 30;
+sub calc_diff_sec {
+    my ($updated_at, $inserted_at) = @_;
+    my $diff_sec = defined datetime_to_epoch($updated_at)
+                   ? Date_to_Time(Today_and_Now()) - datetime_to_epoch($updated_at)
+                   : Date_to_Time(Today_and_Now()) - datetime_to_epoch($inserted_at);
+    return $diff_sec;
+}
+
+sub datetime_to_epoch {
+    my $datetime = shift;
+    my ($year, $month, $day, $hour, $min, $sec) = map {
+        int $_
+    } $datetime =~ /^(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2}):(\d{2})$/;
+    return unless $year;
+    return Date_to_Time($year, $month, $day, $hour, $min, $sec);
+}
+
+sub calc_count {
+    my ($last, $current) = @_;
+    return ($current->{negative_point} - $last->{negative_point}) + ($current->{positive_point} - $last->{positive_point});
 }
 

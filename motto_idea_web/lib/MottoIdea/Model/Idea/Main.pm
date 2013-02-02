@@ -20,7 +20,6 @@ sub validate_basic_params {
         title          => { type  => Params::Validate::SCALAR },
         status_id      => { regex => qr/^\d+$/ },
         category_id    => { regex => qr/^\d+$/ },
-        count          => { regex => qr/^\d+$/, default => 0 },
         positive_point => { regex => qr/^\d+$/ },
         negative_point => { regex => qr/^\d+$/ },
     });
@@ -30,7 +29,7 @@ sub get_update_params {
     my $self = shift;
     my ($params) = @_;
     return {
-        map { $_ => $params->{$_} } qw/title status_id category_id count positive_point negative_point/
+        map { $_ => $params->{$_} } qw/title status_id category_id positive_point negative_point/
     };
 }
 

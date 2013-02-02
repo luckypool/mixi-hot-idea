@@ -35,6 +35,12 @@ sub insert {
     return $self->master->insert($self->table, $params)->get_columns;
 }
 
+sub replace {
+    my $self = shift;
+    my $params = $self->validate_basic_params(@_);
+    return $self->master->replace($self->table, $params)->get_columns;
+}
+
 sub select_by_id {
     my $self = shift;
     my $params = Params::Validate::validate(@_, {
@@ -47,7 +53,7 @@ sub select_by_id {
     return $row->get_columns;
 }
 
-sub update_by_id {
+sub update {
     my $self = shift;
     my $params = $self->validate_basic_params(@_);
     return $self->master->update(
