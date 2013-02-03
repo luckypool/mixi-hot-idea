@@ -151,9 +151,10 @@ for my $current_data (@$current_data_list){
 
     my $is_not_changed = all { $found_data->{$_} eq $current_data->{$_} } qw/positive_point negative_point/;
     my $plus_count = $is_not_changed ? 0 : calc_count($found_data, $current_data);
+    my $current_tendency = $rank_model->select_tendency_by_id(idea_id=>$current_data->{idea_id});
     my $diff_sec = calc_diff_sec(map { $found_data->{$_} } qw/updated_at inserted_at/);
 
-    $rank_params->{tendency}  = int $plus_count * 60 * 60 * 24 / $diff_sec;
+    $rank_params->{tendency}  = ($current_tendency + int $plus_count ) * 60 * 60 * 24 / $diff_sec;
     $rank_params->{last_rank} = $rank_model->select_current_rank_by_id(idea_id=>$current_data->{idea_id});
     $rank_params->{current_rank} = $current_rank;
     $rank_model->update($rank_params);

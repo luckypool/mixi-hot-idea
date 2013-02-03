@@ -35,24 +35,21 @@ sub get_update_params {
 
 sub select_last_updated_datetime_by_id {
     my $self = shift;
-    my $params = Params::Validate::validate(@_, {
-        idea_id   => { regex => qr/^\d+$/ },
-    });
-    my $row = $self->slave->search($self->table, {
-        idea_id => $params->{idea_id},
-    })->first;
+    my $row = $self->select_by_id(@_);
     return unless $row;
     return $row->get_columns->{updated_at};
 }
 
+sub select_tendency_by_id {
+    my $self = shift;
+    my $row = $self->select_by_id(@_);
+    return unless $row;
+    return $row->get_columns->{tendency};
+}
+
 sub select_current_rank_by_id {
     my $self = shift;
-    my $params = Params::Validate::validate(@_, {
-        idea_id   => { regex => qr/^\d+$/ },
-    });
-    my $row = $self->slave->search($self->table, {
-        idea_id => $params->{idea_id},
-    })->first;
+    my $row = $self->select_by_id(@_);
     return unless $row;
     return $row->get_columns->{current_rank};
 }
