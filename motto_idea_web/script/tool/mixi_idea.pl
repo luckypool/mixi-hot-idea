@@ -4,6 +4,9 @@ use strict;
 use warnings;
 use 5.010;
 
+use FindBin;
+use lib "$FindBin::Bin/../../lib/";
+
 use List::MoreUtils qw/all apply indexes/;
 use Date::Calc qw/Date_to_Time Today_and_Now Mktime/;
 
@@ -78,27 +81,27 @@ sub get_id {
     }
 }
 
-# my $conf = do q(./config.pl) or die;
-# my $search_idea_url = q{http://mixi.jp/search_idea.pl?category_id=0&status_id=99&keyword=&order=2&ignore_mikan};
-# my $mech = WWW::Mechanize->new;
-# $mech->get('http://mixi.jp/');
-# $mech->submit_form(
-#     fields => {
-#         email => $conf->{login_mail},
-#         password => $conf->{login_password},
-#     },
-# );
-# $mech->get($search_idea_url);
-# my $q = Web::Query->new_from_html($mech->decoded_content);
+my $conf = do "$FindBin::Bin/../../config.pl" or die;
+my $search_idea_url = q{http://mixi.jp/search_idea.pl?category_id=0&status_id=99&keyword=&order=2&ignore_mikan};
+my $mech = WWW::Mechanize->new;
+$mech->get('http://mixi.jp/');
+$mech->submit_form(
+    fields => {
+        email => $conf->{login_mail},
+        password => $conf->{login_password},
+    },
+);
+$mech->get($search_idea_url);
+my $q = Web::Query->new_from_html($mech->decoded_content);
 
-open IN, '<:utf8', 'hoge.html' or die;
-my $html;
-{
-    local $/ = undef; # <FILE>を配列じゃなくて一括で受け取る
-    $html = <IN>;
-}
-close IN;
-my $q = Web::Query->new_from_html($html);
+# open IN, '<:utf8', 'hoge.html' or die;
+# my $html;
+# {
+#     local $/ = undef; # <FILE>を配列じゃなくて一括で受け取る
+#     $html = <IN>;
+# }
+# close IN;
+# my $q = Web::Query->new_from_html($html);
 
 
 $q = $q->find('.entryList01');
@@ -179,3 +182,4 @@ sub calc_count {
     return ($current->{negative_point} - $last->{negative_point}) + ($current->{positive_point} - $last->{positive_point});
 }
 
+say 'success';

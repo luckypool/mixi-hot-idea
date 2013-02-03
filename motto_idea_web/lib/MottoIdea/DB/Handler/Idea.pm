@@ -18,6 +18,9 @@ sub get_dbh {
     return MottoIdea::DB::Skinny::Idea->new(+{
         dsn => $config->db_idea,
         username=>$user,
+        connect_options => {
+            mysql_enable_utf8 => 1,
+        }
     });
 }
 
