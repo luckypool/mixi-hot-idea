@@ -154,7 +154,7 @@ for my $current_data (@$current_data_list){
     my $current_tendency = $rank_model->select_tendency_by_id(idea_id=>$current_data->{idea_id});
     my $diff_sec = calc_diff_sec(map { $found_data->{$_} } qw/updated_at inserted_at/);
 
-    $rank_params->{tendency}  = ($current_tendency + int $plus_count ) * 60 * 60 * 24 / $diff_sec;
+    $rank_params->{tendency}  = int (($current_tendency/24/6+$plus_count)*60*60*24/$diff_sec);
     $rank_params->{last_rank} = $rank_model->select_current_rank_by_id(idea_id=>$current_data->{idea_id});
     $rank_params->{current_rank} = $current_rank;
     $rank_model->update($rank_params);

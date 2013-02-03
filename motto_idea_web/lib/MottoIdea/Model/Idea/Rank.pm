@@ -37,21 +37,21 @@ sub select_last_updated_datetime_by_id {
     my $self = shift;
     my $row = $self->select_by_id(@_);
     return unless $row;
-    return $row->get_columns->{updated_at};
+    return $row->{updated_at};
 }
 
 sub select_tendency_by_id {
     my $self = shift;
     my $row = $self->select_by_id(@_);
     return unless $row;
-    return $row->get_columns->{tendency};
+    return $row->{tendency};
 }
 
 sub select_current_rank_by_id {
     my $self = shift;
     my $row = $self->select_by_id(@_);
     return unless $row;
-    return $row->get_columns->{current_rank};
+    return $row->{current_rank};
 }
 
 1;
