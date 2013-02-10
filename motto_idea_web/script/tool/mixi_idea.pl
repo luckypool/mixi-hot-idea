@@ -19,7 +19,7 @@ use MottoIdea::Model::Idea::Rank;
 
 #DEBUG
 use Data::Dumper;
-use MottoIdea::Test::DB qw/DB_IDEA/;
+# use MottoIdea::Test::DB qw/DB_IDEA/;
 
 
 # --
@@ -51,7 +51,7 @@ sub main {
         };
         my $rank_params = {
             idea_id      => $current_data->{idea_id},
-            tendency     => int 1 * 60 * 60 * 24 * 7 / 600,
+            tendency     => int 1 * 60 * 60 * 24 / 600,
             current_rank => $current_rank,
             last_rank    => 0,
         };
@@ -68,8 +68,10 @@ sub main {
             say "  update $main_params->{idea_id}";
             my $is_not_changed = all { $last_main_data->{$_} eq $current_data->{$_} } qw/positive_point negative_point/;
             my $plus_count = $is_not_changed ? 0 : calc_count($last_main_data, $current_data);
-            my $diff_sec = calc_diff_sec(map { $last_main_data->{$_} } qw/updated_at inserted_at/);
-            $rank_params->{tendency}  = int $plus_count*60*60*24*7/$diff_sec;
+            my $diff_sec = calc_diff_sec($last_main_data->{inserted_at});
+            my $last_tendency = $last_rank_data->{tendency};
+            my $plus_tendency = $plus_count*60*60*24;
+            $rank_params->{tendency}  = int(($last_tendency+$plus_tendency)*60*60*24/(60*60*24+$diff_sec));
             $rank_params->{last_rank} = $last_rank_data->{current_rank};
             $rank_params->{current_rank} = $current_rank;
             $rank_model->update($rank_params);
@@ -82,10 +84,8 @@ sub main {
 # helper functions
 # --
 sub calc_diff_sec {
-    my ($updated_at, $inserted_at) = @_;
-    my $diff_sec = defined datetime_to_epoch($updated_at)
-                   ? Date_to_Time(Today_and_Now()) - datetime_to_epoch($updated_at)
-                   : Date_to_Time(Today_and_Now()) - datetime_to_epoch($inserted_at);
+    my $inserted_at = shift;
+    my $diff_sec = Date_to_Time(Today_and_Now()) - datetime_to_epoch($inserted_at);
     return $diff_sec;
 }
 
