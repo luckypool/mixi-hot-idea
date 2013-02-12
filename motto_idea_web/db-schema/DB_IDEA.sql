@@ -30,3 +30,11 @@ CREATE TABLE ranking_info (
     INDEX idx_updated_at (updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+DROP TABLE if EXISTS body_info;
+CREATE TABLE body_info (
+    idea_id INT unsigned NOT NULL,
+    body VARCHAR(1023) DEFAULT NULL,
+    PRIMARY KEY (idea_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

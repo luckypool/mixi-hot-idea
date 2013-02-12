@@ -26,7 +26,6 @@ sub create_dummy_data {
         title          => "dummyタイトル:$id",
         status_id      => int rand 4,
         category_id    => int rand 100,
-        count          => int rand 10000,
         positive_point => int rand 10000,
         negative_point => int rand 10000,
     };
@@ -62,11 +61,10 @@ subtest q/crud/ => sub {
         my $expected = {%$dummy_data1};
         $expected->{title} = 'ほげええ';
         $expected->{status_id} = 3;
-        $expected->{count} = 10;
         $expected->{inserted_at} = $obj->time_to_mysqldatetime($now);
         $expected->{updated_at} = $obj->time_to_mysqldatetime($update_time);
-        ok $obj->update_by_id(
-            map { $_ => $expected->{$_} } qw/idea_id title status_id category_id count positive_point negative_point/
+        ok $obj->update(
+            map { $_ => $expected->{$_} } qw/idea_id title status_id category_id positive_point negative_point/
         );
         my $row = $obj->select_by_id(idea_id=>$expected->{idea_id});
         cmp_deeply $expected, $row;
@@ -114,21 +112,6 @@ subtest q/find/ => sub {
     is_deeply $rows, [], 'length ok';
 
     Test::MockTime::restore_time();
-};
-
-subtest q/bluk insert/ => sub {
-    my $dummy_data = [ map { create_dummy_data() } (0..2) ];
-
-    my $row = $obj->bulk_insert(data=>$dummy_data);
-    ok $row;
-
-    for my $num (0..2){
-        my $expected = \%{$dummy_data->[$num]};
-        $row = $obj->select_by_id(idea_id=>$expected->{idea_id});
-        $expected->{inserted_at} = $obj->time_to_mysqldatetime(); # bulk_insert は pre_insert_hook が効かない
-        $expected->{updated_at} = $obj->time_to_mysqldatetime();
-        cmp_deeply $expected, $row;
-    }
 };
 
 done_testing;

@@ -61,7 +61,7 @@ subtest q/crud/ => sub {
         $expected->{current_rank} = 1;
         $expected->{inserted_at}  = $obj->time_to_mysqldatetime($now);
         $expected->{updated_at}   = $obj->time_to_mysqldatetime($update_time);
-        ok $obj->update_by_id(
+        ok $obj->update(
             idea_id => $expected->{idea_id},
             tendency => $expected->{tendency},
             current_rank => $expected->{current_rank},
