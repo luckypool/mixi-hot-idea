@@ -52,8 +52,8 @@ sub bulk_insert {
 sub find {
     my $self = shift;
     my $params = Params::Validate::validate(@_, {
-        from   => { regex => qr/^\d+$/, default => $self->time_to_mysqldatetime(time-DEFAULT_TIME_TO_FIND()) },
-        to     => { regex => qr/^\d+$/, default => $self->time_to_mysqldatetime(time) },
+        from   => { regex => qr/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/, default => $self->time_to_mysqldatetime(time-DEFAULT_TIME_TO_FIND()) },
+        to     => { regex => qr/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/, default => $self->time_to_mysqldatetime(time) },
         offset => { regex => qr/^\d+$/, default => DEFAULT_OFFSET() },
         limit  => { regex => qr/^\d+$/, default => DEFAULT_LIMIT() },
         order  => { regex => qr/^(DESC|ASC)$/, default => DEFAULT_ORDER() },

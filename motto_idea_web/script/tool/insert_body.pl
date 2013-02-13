@@ -7,6 +7,8 @@ use 5.010;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/";
 
+use Date::Calc qw/Date_to_Time Today_and_Now Mktime/;
+
 use WWW::Mechanize;
 use WWW::Mechanize::DecodedContent;
 use Web::Query;
@@ -50,9 +52,12 @@ sub main {
     );
 
     for my $id (map{$_->{idea_id}} @$found_list){
+        my $body =  get_body_by_id($id);
+        say $id;
+        say $body;
         $body_model->replace(
             idea_id => $id,
-            body    => get_body_by_id($id),
+            body    => $body,
         );
     }
 }
