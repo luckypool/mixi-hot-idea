@@ -63,6 +63,10 @@ sub main {
             say "  insert $main_params->{idea_id}";
             $main_model->insert($main_params);
             $rank_model->insert($rank_params);
+            $body_model->insert(
+                idea_id => $main_params->{idea_id},
+                body    => get_body_by_id($main_params->{idea_id}),
+            );
         } else {
             # update
             say "  update $main_params->{idea_id}";
@@ -83,6 +87,19 @@ sub main {
 # --
 # helper functions
 # --
+sub get_body_by_id {
+    my $idea_id = shift;
+    return unless $idea_id;
+    my $view_idea_url = "http://mixi.jp/view_idea.pl?id=$idea_id";
+    $mech->get($view_idea_url);
+    my $q = Web::Query->new_from_html($mech->decoded_content);
+    return $q->find('ul.editContents')->find('li')->filter(sub{
+        my ($i, $elem) = @_;
+        return 0 if $i ne 1;
+        return 1;
+    })->find('dd')->text;
+}
+
 sub calc_diff_sec {
     my ($rank_data) = @_;
     my $last_datetime = datetime_to_epoch($rank_data->{updated_at});

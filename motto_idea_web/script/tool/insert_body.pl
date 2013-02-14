@@ -18,7 +18,7 @@ use MottoIdea::Model::Idea::Body;
 
 #DEBUG
 use Data::Dumper;
-# use MottoIdea::Test::DB qw/DB_IDEA/;
+use MottoIdea::Test::DB qw/DB_IDEA/;
 
 # --
 # common objects
@@ -45,9 +45,9 @@ say sprintf("succeed at -- %04d/%02d/%02d %02d:%02d:%02d\n", Today_and_Now());
 # --
 sub main {
     my $found_list = $main_model->find(
-        from => $main_model->time_to_mysqldatetime(time-60*60*24*7),
+        from => $main_model->time_to_mysqldatetime(time-60*60*24),
         to   => $main_model->time_to_mysqldatetime(time),
-        limit => 200,
+        limit => 1000,
         find_type => 'inserted_at'
     );
 
