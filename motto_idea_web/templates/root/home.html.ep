@@ -1,0 +1,17 @@
+
+% layout 'default';
+
+% if ($self->stash->{error_messages}) {
+<ul id="caution">
+% for my $message ( @{$self->stash->{error_messages}} ) {
+<li><%= $message %></li>
+% }
+</ul>
+% }
+
+<form action="/" method="post">
+  Title <input type="text" name="title" size="40" />
+  Source <textarea name="body" rows="15" cols="40"></textarea>
+  <input type="submit" value="paste" />
+</form>
+
