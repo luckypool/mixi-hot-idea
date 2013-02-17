@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="css/home.css" type="text/css" media="screen" charset="utf-8" />
+  <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+  <script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
+  <script type="text/javascript" src="js/jquery.masonry.min.js"></script>
   <title><%= title %></title>
 </head>
 <body>
@@ -14,6 +17,7 @@
 
   <%= content %>
 
+  <button id="showMore">show more</button>
   <footer><%= $footer_text %></footer>
 </div>
 </body>
