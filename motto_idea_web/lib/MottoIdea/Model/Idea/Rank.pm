@@ -13,6 +13,7 @@ use constant {
     DEFAULT_LIMIT        => 30,
     DEFAULT_OFFSET       => 0,
     DEFAULT_ORDER        => 'DESC',
+    DEFAULT_GT_TENDENCY  => 144,
     DEFAULT_TIME_TO_FIND => 60 * 60 * 24,
 };
 
@@ -72,7 +73,7 @@ sub find {
 
     my $row = $self->slave->search_named(
         q{
-            SELECT * FROM %s WHERE %s BETWEEN :from AND :to ORDER BY %s %s LIMIT %s OFFSET %s
+            SELECT idea_id,tendency,current_rank,last_rank FROM %s WHERE %s BETWEEN :from AND :to ORDER BY %s %s LIMIT %s OFFSET %s
         },
         $params,
         [ $self->table, map { $params->{$_} } qw/find_type find_type order limit offset/]
@@ -80,6 +81,31 @@ sub find {
     return unless $row;
     return [ map {$_->get_columns} @$row ];
 }
+
+sub find_recent_top {
+    my $self = shift;
+    my $params = Params::Validate::validate(@_, {
+        from   => { regex => qr/^\d+$/, default => $self->time_to_mysqldatetime(time-DEFAULT_TIME_TO_FIND()) },
+        to     => { regex => qr/^\d+$/, default => $self->time_to_mysqldatetime(time) },
+        offset => { regex => qr/^\d+$/, default => DEFAULT_OFFSET() },
+        limit  => { regex => qr/^\d+$/, default => DEFAULT_LIMIT() },
+        order  => { regex => qr/^(DESC|ASC)$/, default => DEFAULT_ORDER() },
+        find_type => { regex => qr/^(updated_at|inserted_at)$/, default => 'updated_at' },
+        gt_tendency => { regex => qr/^\d+$/, default => DEFAULT_GT_TENDENCY() },
+    });
+
+    my $row = $self->slave->search_named(
+        q{
+            SELECT idea_id,tendency FROM %s WHERE tendency > %s AND %s BETWEEN :from AND :to ORDER BY tendency %s LIMIT %s OFFSET %s
+        },
+        $params,
+        [ $self->table, map { $params->{$_} } qw/gt_tendency find_type order limit offset/]
+    )->all;
+    return unless $row;
+    return [ map {$_->get_columns} @$row ];
+}
+
+
 
 
 # --
