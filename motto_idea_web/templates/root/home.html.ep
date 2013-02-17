@@ -1,5 +1,32 @@
 % layout 'default';
 <div id="contents_area_main">
 </div>
-<script type="text/javascript" src="js/main.js">
+<script type="text/javascript" src="js/home.js">
 </script>
+
+
+<!-- begin: TEMPLATE -->
+<div id="container_template">
+  <div class="container small left shadow">
+    <h3 class="tendency">${tendency}<span class="unit">勢い</span></h3>
+    <div class="body">
+      <h3 class="title">${title}</h3>
+      <p class="detail">${detail}</p>
+      <ul class="property">
+        <li>
+          <a class="category_label" target="_blank" href="http://mixi.jp/search_idea.pl?keyword=&amp;category_id=${categoryId}&amp;order=4&amp;status_id=99">${category}</a>
+        </li>
+      </ul>
+      <div class="percentage">
+        <span class="yes">賛成: ${positivePercentage}% (${positiveCount})</span>
+        <span class="no">反対: ${negativePercentage}% (${negativeCount})</span>
+      </div>
+      <div class="percentage">
+        <span class="yes_bar" style="width:${positivePercentage}%;"></span>
+        <span class="no_bar" style="width:${negativePercentage}%;"></span>
+      </div>
+      <div class="footer"><a href="http://mixi.jp/view_idea.pl?id=${id}" target="_blank">show detail</a></div>
+    </div>
+  </div>
+</div>
+<!-- end: TEMPLATE -->
