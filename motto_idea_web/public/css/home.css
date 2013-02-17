@@ -33,7 +33,7 @@ img.logo {
 
 /* --- contents area ---- */
 div#contents_area_base {
-    width:940px;
+    width: 80%;
     margin: 0 auto;
 }
 
@@ -41,7 +41,7 @@ div#contents_area_base header {
     height: auto;
     width: 100%;
     margin: 0;
-    text-align: center;
+    text-align: left;
 }
 
 div#contents_area_base header p {
@@ -53,7 +53,8 @@ div#contents_area_base footer {
     width: 100%;
     padding: 20px 0;
     color: #777;
-    text-align: center;
+    text-align: left;
+    clear:both;
 }
 
 div#contents_area_main {
@@ -68,6 +69,10 @@ hr.clear {
     clear:both;
 }
 
+/* ---- template ---- */
+div#container_template {
+    display:none;
+}
 
 /* --- container ---- */
 div.container {
@@ -92,13 +97,6 @@ div.small {
     margin-right: 10px;
     margin-left: 0;
     width: 300px;
-}
-
-div.small_end {
-    margin-right: 0;
-    margin-left: 0;
-    width: 305px;
-    float:right;
 }
 
 
@@ -200,36 +198,43 @@ a.category_label {
 
 
 /* ----- media queries ----- */
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 840px) {
     body {
         font-size: 14px;
     }
     h2 {
         font-size: 18px;
     }
-    div#contents_area_base {
-        width: auto;
-        float: none;
-        margin: 20px 0;
-        background:none;
-        border:none;
-        -moz-box-shadow: none;
-        -webkit-box-shadow: none;
-    }
     div.big {
-        margin: 20px 20px;
-        width: auto;
+        margin: 20px auto;
+        width: 600px;
         float: none;
     }
     div.small {
-        margin: 20px 20px;
-        width: auto;
+        margin: 20px auto;
+        width: 600px;
         float: none;
     }
-    div.small_end {
-        margin: 20px 20px;
-        width: auto;
+    div#contents_area_base {
+        width: 80%;
+        margin: 0 auto;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    div.big {
+        margin: 20px auto;
+        width: 100%;
         float: none;
+    }
+    div.small {
+        margin: 20px auto;
+        width: 100%;
+        float: none;
+    }
+    div#contents_area_base {
+        width: 80%;
+        margin: 0 auto;
     }
 }
 
