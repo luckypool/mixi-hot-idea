@@ -16,6 +16,7 @@ use Web::Query;
 
 use MottoIdea::Model::Idea::Main;
 use MottoIdea::Model::Idea::Rank;
+use MottoIdea::Model::Idea::Body;
 
 #DEBUG
 use Data::Dumper;
@@ -30,6 +31,7 @@ my $search_idea_url = $conf->{search_idea_url};
 my $mech = WWW::Mechanize->new;
 my $main_model   = MottoIdea::Model::Idea::Main->new;
 my $rank_model   = MottoIdea::Model::Idea::Rank->new;
+my $body_model = MottoIdea::Model::Idea::Body->new;
 
 my @today_and_now = Today_and_Now();
 
