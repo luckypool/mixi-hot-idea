@@ -1,5 +1,20 @@
 <!DOCTYPE html>
-<html>
-  <head><title><%= title %></title></head>
-  <body><%= content %></body>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/main.css" type="text/css" media="screen" charset="utf-8" />
+  <title><%= title %></title>
+</head>
+<body>
+<div id="contents_area_base">
+  <header>
+    <img class="logo shadow" src="img/m-idea.png" alt="m !dea" height="30px" />
+    <p>mixi 機能要望ホットエントリ</p>
+  </header>
+
+  <%= content %>
+
+  <footer><%= $footer_text %></footer>
+</div>
+</body>
 </html>
