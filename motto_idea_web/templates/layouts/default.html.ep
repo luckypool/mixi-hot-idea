@@ -17,7 +17,7 @@
 
   <%= content %>
 
-  <button id="showMore">show more</button>
+  <button id="showMoreButton">show more</button>
   <footer><%= $footer_text %></footer>
 </div>
 </body>

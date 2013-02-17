@@ -16,6 +16,7 @@
         <li>
           <a class="category_label" target="_blank" href="http://mixi.jp/search_idea.pl?keyword=&amp;category_id=${categoryId}&amp;order=4&amp;status_id=99">${category}</a>
         </li>
+        <li>${updatedAt}</li>
       </ul>
       <div class="percentage">
         <span class="yes">賛成: ${positivePercentage}% (${positiveCount})</span>

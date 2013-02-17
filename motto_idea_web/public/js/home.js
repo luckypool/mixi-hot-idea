@@ -1,4 +1,48 @@
 (function(){
+    var categoryOf = {
+        1  : '日記',
+        2  : 'コミュニティ',
+        3  : 'モバイル版',
+        4  : 'レビュー',
+        5  : 'メッセージ',
+        6  : '足あと（訪問者）',
+        7  : 'お気に入り',
+        8  : 'ニュース',
+        9  : 'プレミアム',
+        10 : 'フォト',
+        11 : 'ミュージック',
+        12 : '友人',
+        13 : 'つぶやき',
+        14 : 'ゲーム',
+        15 : 'mixiページ',
+        16 : 'mixiモール（ショッピング）',
+        17 : 'チェック',
+        18 : 'チェックイン',
+        19 : 'スマートフォン版',
+        20 : 'iPhoneアプリ',
+        21 : 'Androidアプリ',
+        22 : 'パソコン版',
+        23 : 'カレンダー',
+        24 : '同級生・同僚',
+        25 : '機能要望',
+        26 : 'プロフィール',
+        27 : 'mixiパーク',
+        28 : 'アクセスブロック',
+        29 : '友人を探す',
+        30 : 'コメント/イイネ',
+        31 : '動画',
+        32 : 'mixiバースデー',
+        33 : '3DS版',
+        34 : '検索機能',
+        35 : 'mixiポイント',
+        36 : '新着お知らせ枠',
+        37 : '友人の更新情報(タイムライン)',
+        38 : '新着お知らせ枠(イイネ・コメント通知)',
+        39 : 'mixi新規登録',
+        40 : 'メルマガ',
+        99 : 'その他'
+    };
+
     function Background(){
         this.initialize.apply(this, arguments);
     }
@@ -10,7 +54,24 @@
             this.rankModel = new Model({type:"rank", method:"find"});
             this.currentItemSize = 6;
             this.assignInitialContents();
+            this.assignEventHandlers();
             console.log("init.");
+        },
+        assignEventHandlers: function(){
+            var _self = this;
+            $('#showMoreButton').click(function(){
+                var jButton = $(this);
+                jButton.attr("disabled","disabled");
+                _self.getIdeaEntities({
+                    limit  : 6,
+                    offset : _self.currentItemSize,
+                    order  : 'DESC'
+                }).done(function(entities){
+                    _self.view.appendEntities(entities);
+                    _self.currentItemSize += 6;
+                    jButton.removeAttr("disabled");
+                });
+            });
         },
         assignInitialContents: function(){
             var _self = this;
@@ -46,6 +107,7 @@
                         positive: result.positive_point,
                         negative: result.negative_point
                     });
+                    entities[i].updatedAt = result.updated_at;
                     batchData.push({id:result.idea_id});
                 }
                 return _self.bodyModel.batchRequest(batchData);
@@ -79,15 +141,18 @@
         },
         appendEntities: function(entities){
             for(var i=0; i<entities.length; i++){
-                $.tmpl(this.templateName, entities[i]).appendTo('#contents_area_main');
+                var newEntity = $.tmpl(this.templateName, entities[i]);
+                $('#contents_area_main')
+                    .masonry({
+                        isAnimated: true,
+                        isFitWidth: true,
+                        animationOptions: {
+                            duration: 400
+                        }
+                    })
+                    .append(newEntity)
+                    .masonry('reload');
             }
-            $('#contents_area_main').masonry({
-                isAnimated: true,
-                isFitWidth: true,
-                animationOptions: {
-                    duration: 400
-                }
-            });
         }
     };
 
@@ -159,7 +224,7 @@
         },
         setCategoryId: function(id){
             this.categoryId = id;
-            this.category   = 'DUMMY';
+            this.category   = categoryOf[id];
         },
         setCount: function(countObj){
             this.positiveCount = parseInt(countObj.positive, 10);
@@ -175,6 +240,7 @@
                 detail: this.detail,
                 categoryId: this.categoryId,
                 category: this.category,
+                updatedAt: this.updatedAt,
                 positiveCount: this.positiveCount,
                 negativeCount: this.negativeCount,
                 positivePercentage: this.positivePercentage,
