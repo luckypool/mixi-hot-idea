@@ -33,7 +33,7 @@ img.logo {
 
 /* --- contents area ---- */
 div#contents_area_base {
-    width: 80%;
+    width: 90%;
     margin: 0 auto;
 }
 
@@ -90,13 +90,13 @@ div.left {
 div.big {
     margin-right: 10px;
     margin-left: 0;
-    width: 610px;
+    width: 530px;
 }
 
 div.small {
     margin-right: 10px;
     margin-left: 0;
-    width: 300px;
+    width: 200px;
 }
 
 
@@ -207,16 +207,16 @@ a.category_label {
     }
     div.big {
         margin: 20px auto;
-        width: 600px;
+        width: 100%;
         float: none;
     }
     div.small {
         margin: 20px auto;
-        width: 600px;
+        width: 100%;
         float: none;
     }
     div#contents_area_base {
-        width: 80%;
+        width: 90%;
         margin: 0 auto;
     }
 }
@@ -233,7 +233,7 @@ a.category_label {
         float: none;
     }
     div#contents_area_base {
-        width: 80%;
+        width: 90%;
         margin: 0 auto;
     }
 }

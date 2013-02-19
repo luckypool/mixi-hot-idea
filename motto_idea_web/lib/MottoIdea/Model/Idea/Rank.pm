@@ -85,7 +85,7 @@ sub find {
 sub find_recent_top {
     my $self = shift;
     my $params = Params::Validate::validate(@_, {
-        from   => { regex => qr/^\d+$/, default => $self->time_to_mysqldatetime(time-DEFAULT_TIME_TO_FIND()*7) },
+        from   => { regex => qr/^\d+$/, default => $self->time_to_mysqldatetime(time-DEFAULT_TIME_TO_FIND()) },
         to     => { regex => qr/^\d+$/, default => $self->time_to_mysqldatetime(time) },
         offset => { regex => qr/^\d+$/, default => DEFAULT_OFFSET() },
         limit  => { regex => qr/^\d+$/, default => DEFAULT_LIMIT() },

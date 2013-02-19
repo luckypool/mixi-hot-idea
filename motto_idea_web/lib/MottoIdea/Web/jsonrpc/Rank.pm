@@ -11,12 +11,14 @@ sub find {
         limit  => { regex => qr/^\d+$/, default => 30 },
         offset => { regex => qr/^\d+$/, default => 0 },
         order  => { regex => qr/^(DESC|ASC)$/, default => 'DESC' },
+        gt_tendency => { regex => qr/^\d+$/, default => 144 },
     });
     my $model = MottoIdea::Model::Idea::Rank->new;
     return $model->find_recent_top(
         limit  => $params->{limit},
         offset => $params->{offset},
-        order => $params->{order},
+        order  => $params->{order},
+        gt_tendency => $params->{gt_tendency},
     );
 }
 

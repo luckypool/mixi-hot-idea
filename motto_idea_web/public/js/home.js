@@ -65,7 +65,8 @@
                 _self.getIdeaEntities({
                     limit  : 6,
                     offset : _self.currentItemSize,
-                    order  : 'DESC'
+                    order  : 'DESC',
+                    gt_tendency : 100
                 }).done(function(entities){
                     _self.view.appendEntities(entities);
                     _self.currentItemSize += 6;
@@ -131,17 +132,10 @@
             this.templateName = "containerTemplate";
             $.template(this.templateName, this.baseHtml);
         },
-        appendContainer: function(params){
-            var positive_count = parseInt(params.positive_count, 10);
-            var negative_count = parseInt(params.negative_count, 10);
-            var positive_percentage = Math.floor(positive_count*100/(positive_count+negative_count));
-            params.positive_percentage = positive_percentage;
-            params.negative_percentage = 100-positive_percentage;
-            $.tmpl(this.templateName, params).appendTo('#contents_area_main');
-        },
         appendEntities: function(entities){
             for(var i=0; i<entities.length; i++){
                 var newEntity = $.tmpl(this.templateName, entities[i]);
+                console.log(newEntity);
                 $('#contents_area_main')
                     .masonry({
                         isAnimated: true,
