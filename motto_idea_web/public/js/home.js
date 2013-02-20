@@ -139,7 +139,6 @@
                 $('#contents_area_main')
                     .masonry({
                         isAnimated: true,
-                        isFitWidth: true,
                         animationOptions: {
                             duration: 400
                         }

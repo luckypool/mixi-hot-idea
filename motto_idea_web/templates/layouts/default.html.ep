@@ -12,7 +12,7 @@
 <body>
 <div id="contents_area_base">
   <header>
-    <a href="/"><img class="logo shadow" src="img/m-idea.png" alt="m !dea" height="30px" /></a>
+    <a href="/"><img class="logo" src="img/m-idea.png" alt="m !dea" height="30px" /></a>
     <p>mixi 機能要望ホットエントリ</p>
   </header>
 

@@ -7,7 +7,7 @@
 
 <!-- begin: TEMPLATE -->
 <div id="container_template">
-  <div class="container small left shadow">
+  <div class="container small left">
     <h3 class="tendency">${tendency}<span class="unit">勢い</span></h3>
     <div class="body">
       <h3 class="title">${title}</h3>
