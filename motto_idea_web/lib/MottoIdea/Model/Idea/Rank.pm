@@ -14,7 +14,7 @@ use constant {
     DEFAULT_OFFSET       => 0,
     DEFAULT_ORDER        => 'DESC',
     DEFAULT_GT_TENDENCY  => 144,
-    DEFAULT_TIME_TO_FIND => 60 * 60 * 24,
+    DEFAULT_TIME_TO_FIND => 60 * 60 * 24 * 7,
 };
 
 sub table {

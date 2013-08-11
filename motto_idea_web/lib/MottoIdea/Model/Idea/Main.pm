@@ -11,7 +11,7 @@ use constant {
     DEFAULT_LIMIT        => 30,
     DEFAULT_OFFSET       => 0,
     DEFAULT_ORDER        => 'DESC',
-    DEFAULT_TIME_TO_FIND => 60 * 60 * 24,
+    DEFAULT_TIME_TO_FIND => 60 * 60 * 24 * 7,
 };
 
 sub table {
